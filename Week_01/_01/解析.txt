@@ -1,0 +1,194 @@
+一、字节码
+Classfile /D:/javaworkspace/geektime/java000/JAVA-000/Week_01/_01/Hello.class
+  Last modified 2020-10-18; size 550 bytes
+  MD5 checksum ea0ac1d561be3650b2d4b5e9130fe5c0
+  Compiled from "Hello.java"
+public class Hello
+  minor version: 0
+  major version: 52
+  flags: ACC_PUBLIC, ACC_SUPER
+Constant pool:
+   #1 = Methodref          #10.#23        // java/lang/Object."<init>":()V
+   #2 = Float              0.1f
+   #3 = Float              11.0f
+   #4 = Long               111l
+   #6 = Long               2l
+   #8 = Methodref          #9.#24         // Hello.add:(II)I
+   #9 = Class              #25            // Hello
+  #10 = Class              #26            // java/lang/Object
+  #11 = Utf8               <init>
+  #12 = Utf8               ()V
+  #13 = Utf8               Code
+  #14 = Utf8               LineNumberTable
+  #15 = Utf8               add
+  #16 = Utf8               (II)I
+  #17 = Utf8               main
+  #18 = Utf8               ([Ljava/lang/String;)V
+  #19 = Utf8               StackMapTable
+  #20 = Class              #27            // "[Ljava/lang/String;"
+  #21 = Utf8               SourceFile
+  #22 = Utf8               Hello.java
+  #23 = NameAndType        #11:#12        // "<init>":()V
+  #24 = NameAndType        #15:#16        // add:(II)I
+  #25 = Utf8               Hello
+  #26 = Utf8               java/lang/Object
+  #27 = Utf8               [Ljava/lang/String;
+{
+  public Hello();
+    descriptor: ()V
+    flags: ACC_PUBLIC
+    Code:
+      stack=1, locals=1, args_size=1
+         0: aload_0
+         1: invokespecial #1                  // Method java/lang/Object."<init>":()V
+         4: return
+      LineNumberTable:
+        line 1: 0
+
+  static int add(int, int);
+    descriptor: (II)I
+    flags: ACC_STATIC
+    Code:
+      stack=2, locals=2, args_size=2
+         0: iload_0
+         1: iload_1
+         2: iadd
+         3: ireturn
+      LineNumberTable:
+        line 5: 0
+
+  public static void main(java.lang.String[]);
+    descriptor: ([Ljava/lang/String;)V
+    flags: ACC_PUBLIC, ACC_STATIC
+    Code:
+      stack=4, locals=14, args_size=1
+         0: iconst_1
+         1: istore_1
+         2: bipush        9
+         4: istore_2
+         5: iload_1
+         6: iload_2
+         7: iadd
+         8: istore_3
+         9: ldc           #2                  // float 0.1f
+        11: fstore        4
+        13: ldc           #3                  // float 11.0f
+        15: fstore        5
+        17: fload         4
+        19: fload         5
+        21: fmul
+        22: fstore        6
+        24: iconst_0
+        25: istore        7
+        27: iconst_0
+        28: istore        8
+        30: iload         8
+        32: bipush        10
+        34: if_icmpge     50
+        37: iload         7
+        39: iload         8
+        41: iadd
+        42: istore        7
+        44: iinc          8, 1
+        47: goto          30
+        50: ldc2_w        #4                  // long 111l
+        53: lstore        8
+        55: ldc2_w        #6                  // long 2l
+        58: lstore        10
+        60: lload         8
+        62: lload         10
+        64: ldiv
+        65: lstore        12
+        67: bipush        15
+        69: bipush        16
+        71: invokestatic  #8                  // Method add:(II)I
+        74: pop
+        75: return
+      LineNumberTable:
+        line 10: 0
+        line 11: 2
+        line 12: 5
+        line 14: 9
+        line 15: 13
+        line 16: 17
+        line 18: 24
+        line 19: 27
+        line 21: 37
+        line 19: 44
+        line 24: 50
+        line 25: 55
+        line 26: 60
+        line 28: 67
+        line 29: 75
+      StackMapTable: number_of_entries = 2
+        frame_type = 255 /* full_frame */
+          offset_delta = 30
+          locals = [ class "[Ljava/lang/String;", int, int, int, float, float, float, int, int ]
+          stack = []
+        frame_type = 250 /* chop */
+          offset_delta = 19
+}
+SourceFile: "Hello.java"
+二、解析
+1）minor version: 0、major version: 52表示当前java编译的文件的版本号
+2）Constant pool:
+   #1 = Methodref          #10.#23        // java/lang/Object."<init>":()V
+   #2 = Float              0.1f
+   #3 = Float              11.0f
+   #4 = Long               111l
+   #6 = Long               2l
+   #8 = Methodref          #9.#24         // Hello.add:(II)I
+   ......
+   这个区域为常量区，定义了类中的常量，方法名，类名，函数返回值等信息。每一个数据都对应一个编号。例如#8对应的就是Hello类中的add方法，#9为类名（Hello），#24记录的是函数名以及返回值。
+3） static int add(int, int);
+    descriptor: (II)I
+    flags: ACC_STATIC
+    Code:
+      stack=2, locals=2, args_size=2
+         0: iload_0
+         1: iload_1
+         2: iadd
+         3: ireturn
+      LineNumberTable:
+        line 5: 0
+		
+	这个区域表示定义的函数add，descriptor表示函数的入参以及返回值的类型为两个int型入参以及int型返回值。
+	函数的栈空间大小为2，本地变量表大小为2，参数大小为2。
+	iload_0和iload_1表示将本地变量表中的slot0和slot1中的值加载到栈空间，iadd表示在栈空间上执行add操作。
+4) 
+         0: iconst_1
+         1: istore_1
+         2: bipush        9
+         4: istore_2
+         5: iload_1
+         6: iload_2
+         7: iadd
+         8: istore_3
+	表示的是定义常量1压入栈中，并将栈顶元素存入本地变量表slot1中，将9压入栈中，然后存入本地变量表slot2中。将局部变量表中slot1和slot2加载到栈中，执行add命令，将结果存入局部变量表slot3中。
+5）     9: ldc           #2                  // float 0.1f
+        11: fstore        4
+        13: ldc           #3                  // float 11.0f
+        15: fstore        5
+        17: fload         4
+        19: fload         5
+        21: fmul
+        22: fstore        6
+		
+	ldc表示将常量#2压入栈中，fstore表示将栈顶元素存入本地变量表slot4中。13-15行与上面步骤类似。17-19行表示将本地变量表slot4和slot5加载到栈中，执行fmul命令，将相乘后的结果存入本地变量表6中。
+	
+6）
+        24: iconst_0
+        25: istore        7
+        27: iconst_0
+        28: istore        8
+        30: iload         8
+        32: bipush        10
+        34: if_icmpge     50
+        37: iload         7
+        39: iload         8
+        41: iadd
+        42: istore        7
+        44: iinc          8, 1
+        47: goto          30
+    这一段表示一个循环代码，定义循环索引存入本地变量slot8，然后将本地变量slot8加载到栈中，if_icmpge表示将数字10压入栈中，比较栈顶两个元素的大小，如果大于则跳转到50行，如果小于则向下执行，44行表示对本地变量表slot8进行加1操作，goto 30表示跳转到30行继续执行。
+		
