@@ -1,0 +1,16 @@
+1.串行GC  java -XX:+UseSerialGC -Xms512m -Xmx512m -Xloggc:gc.demo.log -XX:+PrintGCDetails GCLogAnalysis
+	512M最大堆，发生15次GC，young区最大157M（eden139,s0和s1分别17M），old区349M.耗时18ms到60ms
+2.并行GC  java -XX:+UseParallelGC -Xms512m -Xmx512m -Xloggc:gc.demo.log -XX:+PrintGCDetails -XX:+PrintGCDateStamps GCLogAnalysis
+	512M最大堆，发生36次GC，耗时28ms-38ms
+3.使用CMS GC java -XX:+UseConcMarkSweepGC -Xms512m -Xmx512m -Xloggc:gc.demo.log -XX:+PrintGCDetails -XX:+PrintGCDateStamps GCLogAnalysis
+    512M最大堆，可以看见CMS中每一阶段的操作。
+4.使用G1 GC  java -XX:+UseG1GC -Xms4g -Xmx4g -XX:+PrintGCDetails -XX:+PrintGCDateStamps GCLogAnalysis
+
+总结：
+Allocation Failure 表示GC原因，分配空间失败（空间不足）
+
+user 用户线程时间
+
+sys 系统线程时间
+
+real 真正GC的时间
