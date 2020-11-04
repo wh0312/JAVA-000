@@ -21,15 +21,17 @@ import org.apache.http.util.EntityUtils;
 import java.io.IOException;
 import java.util.concurrent.*;
 
+import static io.netty.handler.codec.http.HttpHeaderValues.KEEP_ALIVE;
 import static io.netty.handler.codec.http.HttpResponseStatus.NO_CONTENT;
 import static io.netty.handler.codec.http.HttpResponseStatus.OK;
 import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
+import static org.apache.http.HttpHeaders.CONNECTION;
 
 public class HttpOutboundHandler {
-    
-    private CloseableHttpClient httpclient;
     private ExecutorService proxyService;
     private String backendUrl;
+
+    CloseableHttpClient  httpclient;
     
     public HttpOutboundHandler(String backendUrl){
         this.backendUrl = backendUrl.endsWith("/")?backendUrl.substring(0,backendUrl.length()-1):backendUrl;
@@ -41,10 +43,12 @@ public class HttpOutboundHandler {
                 keepAliveTime, TimeUnit.MILLISECONDS, new ArrayBlockingQueue<>(queueSize),
                 new NamedThreadFactory("proxyService"), handler);
 
+        httpclient = HttpClientBuilder.create().build();
     }
     
-    public void handle(final FullHttpRequest fullRequest, final ChannelHandlerContext ctx) {
+    public void handle(final FullHttpRequest fullRequest, final ChannelHandlerContext ctx) throws IOException {
         final String url = this.backendUrl + fullRequest.uri();
+        System.out.println("转发请求" + url);
         proxyService.submit(()-> {
             try {
                 fetchGet(fullRequest, ctx, url);
@@ -62,27 +66,26 @@ public class HttpOutboundHandler {
         httpGet.setConfig(requestConfig);
         FullHttpResponse response = null;
         try {
-            httpclient = HttpClientBuilder.create().build();
             CloseableHttpResponse httpResponse = httpclient.execute(httpGet);
             byte[] body = EntityUtils.toByteArray(httpResponse.getEntity());
             response = new DefaultFullHttpResponse(HTTP_1_1, OK, Unpooled.wrappedBuffer(body));
             response.headers().set("Content-Type", "application/json");
             response.headers().setInt("Content-Length", Integer.parseInt(httpResponse.getFirstHeader("Content-Length").getValue()));
 
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
+            System.out.println("ERROR" + e.getMessage());
             response = new DefaultFullHttpResponse(HTTP_1_1, NO_CONTENT);
         } finally {
             if (inbound != null) {
                 if (!HttpUtil.isKeepAlive(inbound)) {
                     ctx.write(response).addListener(ChannelFutureListener.CLOSE);
                 } else {
-                    //response.headers().set(CONNECTION, KEEP_ALIVE);
+                    response.headers().set(CONNECTION, KEEP_ALIVE);
                     ctx.write(response);
                 }
             }
             ctx.flush();
-            httpclient.close();
         }
 
     }
